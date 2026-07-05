@@ -20,7 +20,7 @@
         <div class="container">
             <header>
                 <h1>🖋️ Sign & Fill PDF</h1>
-                <p>Add text and draw your signature to fill out documents easily.</p>
+                <p>Add text and draw or upload your signature to fill out documents easily.</p>
             </header>
             
             <div class="upload-area" id="upload-area">
@@ -70,18 +70,40 @@
         </div>
     </div>
 
-    <!-- Drawing Pad Modal for Signature -->
+    <!-- Modal for Signature -->
     <div class="modal" id="signature-modal">
         <div class="modal-content signature-modal-content">
-            <h2>Draw Your Signature</h2>
-            <div class="canvas-border">
-                <canvas id="signature-pad" width="400" height="200"></canvas>
+            <h2>Add Your Signature</h2>
+            
+            <div class="signature-tabs">
+                <button id="tab-draw" class="tab-btn active">Draw</button>
+                <button id="tab-upload" class="tab-btn">Upload Image</button>
             </div>
-            <div class="signature-actions">
-                <button id="clear-signature" class="tool-btn">Clear</button>
-                <button id="save-signature" class="final-btn btn-single" style="padding: 0.5rem 1.5rem;">Save Signature</button>
-                <button id="cancel-signature" class="tool-btn" style="background: #ff4757; color: white;">Cancel</button>
+
+            <!-- Draw Signature Section -->
+            <div id="sig-draw-section">
+                <div class="canvas-border">
+                    <canvas id="signature-pad" width="400" height="200"></canvas>
+                </div>
+                <div class="signature-actions">
+                    <button id="clear-signature" class="tool-btn">Clear</button>
+                    <button id="save-signature" class="final-btn btn-single" style="padding: 0.5rem 1.5rem;">Save Signature</button>
+                    <button class="tool-btn cancel-sig-btn" style="background: #ff4757; color: white;">Cancel</button>
+                </div>
             </div>
+
+            <!-- Upload Signature Section -->
+            <div id="sig-upload-section" style="display: none;">
+                <div class="upload-sig-area">
+                    <input type="file" id="sig-file-input" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('sig-file-input').click()">Choose Image</button>
+                    <p style="margin-top: 10px; color: #666;">Select a PNG or JPG file</p>
+                </div>
+                <div class="signature-actions">
+                    <button class="tool-btn cancel-sig-btn" style="background: #ff4757; color: white;">Cancel</button>
+                </div>
+            </div>
+
         </div>
     </div>
 

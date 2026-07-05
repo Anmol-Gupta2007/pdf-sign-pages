@@ -2,8 +2,8 @@
 let uploadedFile = null; 
 let originalFileName = "";
 let totalPages = 0;
-let currentTool = 'text'; // 'text' or 'sign'
-let savedSignatureBase64 = null; // Stores the user's drawn signature
+let currentTool = 'text'; 
+let savedSignatureBase64 = null; 
 
 // Toolbar States
 let currentFont = 'Helvetica';
@@ -35,7 +35,13 @@ const sigCanvas = document.getElementById('signature-pad');
 const sigCtx = sigCanvas.getContext('2d');
 const btnClearSig = document.getElementById('clear-signature');
 const btnSaveSig = document.getElementById('save-signature');
-const btnCancelSig = document.getElementById('cancel-signature');
+const cancelSigBtns = document.querySelectorAll('.cancel-sig-btn');
+
+const tabDraw = document.getElementById('tab-draw');
+const tabUpload = document.getElementById('tab-upload');
+const sigDrawSection = document.getElementById('sig-draw-section');
+const sigUploadSection = document.getElementById('sig-upload-section');
+const sigFileInput = document.getElementById('sig-file-input');
 
 // --- Tool Selector Logic ---
 toolTextBtn.addEventListener('click', () => {
@@ -57,6 +63,21 @@ toolSignBtn.addEventListener('click', () => {
 fontSelect.addEventListener('change', (e) => { currentFont = e.target.value; });
 btnBold.addEventListener('click', () => { isBold = !isBold; btnBold.classList.toggle('active'); });
 btnItalic.addEventListener('click', () => { isItalic = !isItalic; btnItalic.classList.toggle('active'); });
+
+// --- Signature Modal Tabs Logic ---
+tabDraw.addEventListener('click', () => {
+    tabDraw.classList.add('active');
+    tabUpload.classList.remove('active');
+    sigDrawSection.style.display = 'block';
+    sigUploadSection.style.display = 'none';
+});
+
+tabUpload.addEventListener('click', () => {
+    tabUpload.classList.add('active');
+    tabDraw.classList.remove('active');
+    sigUploadSection.style.display = 'block';
+    sigDrawSection.style.display = 'none';
+});
 
 // --- Signature Drawing Logic ---
 let isDrawing = false;
@@ -106,18 +127,36 @@ function clearSignature() {
     sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
 }
 
-btnCancelSig.addEventListener('click', () => { sigModal.style.display = 'none'; });
+cancelSigBtns.forEach(btn => {
+    btn.addEventListener('click', () => { sigModal.style.display = 'none'; });
+});
 
 btnSaveSig.addEventListener('click', () => {
     savedSignatureBase64 = sigCanvas.toDataURL("image/png");
-    sigModal.style.display = 'none';
+    applySignatureUpdate();
+});
+
+// --- Signature Upload Logic ---
+sigFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
     
-    // Auto-switch to sign tool
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        savedSignatureBase64 = event.target.result;
+        applySignatureUpdate();
+    };
+    reader.readAsDataURL(file);
+    sigFileInput.value = ''; // reset
+});
+
+function applySignatureUpdate() {
+    sigModal.style.display = 'none';
     currentTool = 'sign';
     toolSignBtn.classList.add('active');
     toolTextBtn.classList.remove('active');
     btnCreateSign.innerHTML = '✏️ Update Signature';
-});
+}
 
 // --- Helper: Download Function ---
 function download(data, filename, type) {
@@ -233,7 +272,6 @@ function handleCanvasClick(e, wrapper) {
         elementContainer.style.left = `${x}px`;
         elementContainer.style.top = `${y - 15}px`; 
     } else {
-        // Center signature somewhat on click
         elementContainer.style.left = `${x - 100}px`;
         elementContainer.style.top = `${y - 50}px`;
     }
@@ -304,7 +342,6 @@ function handleCanvasClick(e, wrapper) {
         const img = document.createElement('img');
         img.src = savedSignatureBase64;
         
-        // Store the base64 internally to extract later
         signBox.dataset.imgSrc = savedSignatureBase64;
         
         signBox.appendChild(img);
@@ -373,15 +410,21 @@ downloadBtn.addEventListener('click', async () => {
                 const finalPdfWidth = domWidth * scaleX;
                 const finalPdfHeight = domHeight * scaleY;
 
-                // 1. Process Signature Boxes
+                // 1. Process Signature Boxes (PNG or JPG)
                 const signBox = overlay.querySelector('.signature-overlay');
                 if (signBox) {
                     const imgSrc = signBox.dataset.imgSrc;
-                    // convert base64 to Uint8Array
                     const res = await fetch(imgSrc);
                     const imageBytes = await res.arrayBuffer();
                     
-                    const embeddedImage = await pdfDoc.embedPng(imageBytes);
+                    const isJpg = imgSrc.startsWith('data:image/jpeg') || imgSrc.startsWith('data:image/jpg');
+                    let embeddedImage;
+                    
+                    if (isJpg) {
+                        embeddedImage = await pdfDoc.embedJpg(imageBytes);
+                    } else {
+                        embeddedImage = await pdfDoc.embedPng(imageBytes);
+                    }
                     
                     page.drawImage(embeddedImage, {
                         x: pdfX,

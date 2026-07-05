@@ -136,15 +136,53 @@ btnSaveSig.addEventListener('click', () => {
     applySignatureUpdate();
 });
 
-// --- Signature Upload Logic ---
+// --- Signature Upload & Background Removal Logic ---
 sigFileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
     
     const reader = new FileReader();
     reader.onload = (event) => {
-        savedSignatureBase64 = event.target.result;
-        applySignatureUpdate();
+        const img = new Image();
+        img.onload = () => {
+            // Draw the uploaded image to a hidden canvas
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = img.width;
+            tempCanvas.height = img.height;
+            tempCtx.drawImage(img, 0, 0);
+
+            // Read the pixels
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imageData.data;
+
+            // Loop through all pixels to remove white/light background
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                // Calculate average brightness of the pixel
+                const brightness = (r + g + b) / 3;
+
+                // If the pixel is light (white paper background), make it fully transparent
+                if (brightness > 180) {
+                    data[i + 3] = 0; // Alpha = 0
+                } else {
+                    // Make the ink slightly darker so it pops on the PDF
+                    data[i] = Math.max(0, r - 40);     // R
+                    data[i + 1] = Math.max(0, g - 40); // G
+                    data[i + 2] = Math.max(0, b - 40); // B
+                }
+            }
+
+            // Put the modified pixels back and convert to transparent PNG
+            tempCtx.putImageData(imageData, 0, 0);
+            savedSignatureBase64 = tempCanvas.toDataURL("image/png");
+            
+            applySignatureUpdate();
+        };
+        img.src = event.target.result;
     };
     reader.readAsDataURL(file);
     sigFileInput.value = ''; // reset
@@ -234,7 +272,7 @@ async function buildPageEditors() {
             const context = canvas.getContext('2d');
             
             const unscaledViewport = page.getViewport({ scale: 1 });
-            const scale = 1000 / unscaledViewport.height; // Large for readability
+            const scale = 1000 / unscaledViewport.height; 
             const viewport = page.getViewport({ scale: scale });
             
             canvas.height = viewport.height;
@@ -410,21 +448,16 @@ downloadBtn.addEventListener('click', async () => {
                 const finalPdfWidth = domWidth * scaleX;
                 const finalPdfHeight = domHeight * scaleY;
 
-                // 1. Process Signature Boxes (PNG or JPG)
+                // 1. Process Signature Boxes
                 const signBox = overlay.querySelector('.signature-overlay');
                 if (signBox) {
                     const imgSrc = signBox.dataset.imgSrc;
                     const res = await fetch(imgSrc);
                     const imageBytes = await res.arrayBuffer();
                     
-                    const isJpg = imgSrc.startsWith('data:image/jpeg') || imgSrc.startsWith('data:image/jpg');
-                    let embeddedImage;
-                    
-                    if (isJpg) {
-                        embeddedImage = await pdfDoc.embedJpg(imageBytes);
-                    } else {
-                        embeddedImage = await pdfDoc.embedPng(imageBytes);
-                    }
+                    // Because we convert all uploads to transparent PNGs in the upload handler,
+                    // we can safely assume this is always a PNG.
+                    const embeddedImage = await pdfDoc.embedPng(imageBytes);
                     
                     page.drawImage(embeddedImage, {
                         x: pdfX,

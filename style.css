@@ -225,7 +225,7 @@ header p {
 .pdf-canvas {
     display: block;
     max-width: 100%;
-    max-height: 1000px; /* Massive size for readability */
+    max-height: 1000px; 
 }
 
 /* --- Interactive Overlay Elements --- */
@@ -307,7 +307,7 @@ header p {
 }
 .overlay-element:hover .delete-btn { display: block; }
 
-/* Modal & Signature Pad */
+/* --- Signature Modal & Tabs --- */
 .modal {
     display: none; position: fixed; z-index: 100; left: 0; top: 0;
     width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);
@@ -319,12 +319,20 @@ header p {
 .signature-modal-content {
     padding: 2rem;
 }
+.signature-tabs {
+    display: flex; justify-content: center; margin-bottom: 1.5rem; gap: 10px;
+}
+.tab-btn {
+    padding: 0.6rem 2rem; border: none; background: #f1f1f1; cursor: pointer; border-radius: 6px; font-weight: bold; color: #555; font-size: 1rem;
+}
+.tab-btn.active {
+    background: #8755c9; color: white;
+}
 .canvas-border {
-    border: 2px dashed #ccc;
-    background: #faf8ff;
-    margin: 1.5rem 0;
-    border-radius: 8px;
-    cursor: crosshair;
+    border: 2px dashed #ccc; background: #faf8ff; margin: 0 0 1.5rem 0; border-radius: 8px; cursor: crosshair;
+}
+.upload-sig-area {
+    background: #faf8ff; padding: 3rem; border-radius: 8px; border: 2px dashed #9e84d4; text-align: center; margin-bottom: 1.5rem;
 }
 .signature-actions {
     display: flex; justify-content: center; gap: 15px;

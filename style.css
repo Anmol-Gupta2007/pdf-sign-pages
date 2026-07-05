@@ -137,17 +137,24 @@ header p {
     border-radius: 4px;
     font-size: 1rem;
     outline: none;
+    height: 35px;
 }
 
+/* --- FIXED: Square formatting buttons (Bold/Italic) --- */
 .style-btn {
     background: #f1f1f1;
     border: 1px solid #ccc;
-    height: 35px;
+    width: 35px; /* Fixed width */
+    height: 35px; /* Fixed height */
+    min-width: 35px; /* Prevents squishing */
     border-radius: 6px;
     cursor: pointer;
     font-size: 1.1rem;
     color: #555;
     transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .style-btn.active {
@@ -157,6 +164,8 @@ header p {
 }
 
 .sign-btn {
+    width: auto;
+    min-width: auto;
     padding: 0 1rem;
     font-weight: bold;
     font-size: 0.95rem;
@@ -167,13 +176,16 @@ header p {
     padding: 0.3rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+    height: 35px;
 }
 
 .color-input {
     cursor: pointer;
-    border: none;
-    height: 30px;
-    width: 40px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 35px;
+    width: 45px;
+    padding: 2px;
 }
 
 .hint-text { color: #888; font-size: 0.95rem; margin-top: 10px; }

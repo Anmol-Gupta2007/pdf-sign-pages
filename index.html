@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign & Fill PDF</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Load pdf-lib for Editing PDFs -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    
+    <!-- Load pdf.js for rendering large page previews -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <div class="app-wrapper">
+        <div class="container">
+            <header>
+                <h1>🖋️ Sign & Fill PDF</h1>
+                <p>Add text and draw your signature to fill out documents easily.</p>
+            </header>
+            
+            <div class="upload-area" id="upload-area">
+                <input type="file" id="file-input" accept="application/pdf" style="display: none;">
+                <button class="upload-btn" id="choose-btn">Choose PDF</button>
+                <p>or drag and drop your file here</p>
+            </div>
+
+            <!-- Editor Toolbar -->
+            <div id="editor-toolbar" style="display: none;" class="action-bar">
+                <h3>Editor Tools</h3>
+                
+                <div class="tools-layout">
+                    <!-- Tool Selector -->
+                    <div class="tool-group">
+                        <button id="tool-text" class="tool-btn active">✍️ Add Text</button>
+                        <button id="tool-sign" class="tool-btn">🖋️ Place Signature</button>
+                    </div>
+
+                    <!-- Signature Creator -->
+                    <div class="tool-group" id="signature-controls">
+                        <button id="btn-create-sign" class="style-btn sign-btn">➕ Create Signature</button>
+                    </div>
+
+                    <!-- Text Controls -->
+                    <div class="tool-group" id="text-controls">
+                        <select id="font-family" class="style-select">
+                            <option value="Helvetica">Helvetica (Sans-Serif)</option>
+                            <option value="TimesRoman">Times Roman (Serif)</option>
+                            <option value="Courier">Courier (Monospace)</option>
+                        </select>
+                        <button id="btn-bold" class="style-btn" title="Bold"><b>B</b></button>
+                        <button id="btn-italic" class="style-btn" title="Italic"><i>I</i></button>
+                        <input type="number" id="font-size" value="16" min="8" max="72" class="size-input" title="Font Size">
+                        <input type="color" id="text-color" value="#000000" class="color-input" title="Color">
+                    </div>
+                </div>
+                
+                <p class="hint-text">Select a tool, then click anywhere on a page below to apply it. Hover over elements to <b>drag</b> or <b>delete</b> them.</p>
+                <hr class="divider">
+                <button id="download-btn" class="final-btn btn-single">⬇️ Save & Download PDF</button>
+            </div>
+
+            <!-- Container for all the individual page editors -->
+            <div id="pages-container"></div>
+            
+        </div>
+    </div>
+
+    <!-- Drawing Pad Modal for Signature -->
+    <div class="modal" id="signature-modal">
+        <div class="modal-content signature-modal-content">
+            <h2>Draw Your Signature</h2>
+            <div class="canvas-border">
+                <canvas id="signature-pad" width="400" height="200"></canvas>
+            </div>
+            <div class="signature-actions">
+                <button id="clear-signature" class="tool-btn">Clear</button>
+                <button id="save-signature" class="final-btn btn-single" style="padding: 0.5rem 1.5rem;">Save Signature</button>
+                <button id="cancel-signature" class="tool-btn" style="background: #ff4757; color: white;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal" id="processing-modal">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <h2>Processing...</h2>
+            <p>Please wait...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

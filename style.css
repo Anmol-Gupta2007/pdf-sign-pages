@@ -1,0 +1,336 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    min-height: 100vh;
+    padding: 4rem 2rem 2rem 2rem; 
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.app-wrapper {
+    width: 100%;
+    max-width: 1200px; 
+}
+
+.container {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    color: #554488;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+header p {
+    color: #7b7b7b;
+    font-size: 1.05rem;
+}
+
+/* Upload Area Styling */
+.upload-area {
+    background: #faf8ff;
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 2px dashed #9e84d4; 
+    margin-bottom: 2rem;
+}
+
+.upload-area:hover, .upload-area.dragover {
+    background-color: #f3ebff;
+    border-color: #7b58c9;
+}
+
+.upload-btn {
+    background: linear-gradient(90deg, #6b84ea 0%, #8755c9 100%);
+    color: white;
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 10px rgba(107, 132, 234, 0.3);
+}
+
+.upload-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.upload-area p { color: #5c6270; font-size: 1rem; }
+
+/* --- Editor Toolbar --- */
+.action-bar {
+    text-align: center;
+    margin-bottom: 2rem;
+    background: #fdfcff;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #e0d4f5;
+    position: sticky;
+    top: 20px;
+    z-index: 50;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.action-bar h3 {
+    color: #554488;
+    margin-bottom: 1rem;
+}
+
+.tools-layout {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.tool-btn {
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    transition: all 0.2s;
+}
+
+.tool-btn.active {
+    background: #e0f2fe;
+    border-color: #4facfe;
+    color: #007bb5;
+}
+
+.style-select {
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.style-btn {
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    height: 35px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #555;
+    transition: all 0.2s;
+}
+
+.style-btn.active {
+    background: #e0f2fe;
+    border-color: #4facfe;
+    color: #007bb5;
+}
+
+.sign-btn {
+    padding: 0 1rem;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.size-input {
+    width: 60px;
+    padding: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.color-input {
+    cursor: pointer;
+    border: none;
+    height: 30px;
+    width: 40px;
+}
+
+.hint-text { color: #888; font-size: 0.95rem; margin-top: 10px; }
+
+.final-btn {
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-single {
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 4px 6px rgba(79, 172, 254, 0.4);
+}
+.final-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+.divider { border: 0; height: 1px; background: #e0d4f5; margin: 1.5rem 0; }
+
+/* --- Page Editor Wrappers --- */
+.page-container {
+    background: #e9ecef;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.canvas-wrapper {
+    position: relative; 
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: white;
+    cursor: crosshair; 
+}
+
+.pdf-canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 1000px; /* Massive size for readability */
+}
+
+/* --- Interactive Overlay Elements --- */
+.overlay-element {
+    position: absolute;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.text-overlay {
+    background: transparent;
+    border: 2px dashed #4facfe;
+    outline: none;
+    padding: 2px;
+    min-width: 100px;
+    min-height: 30px;
+    overflow: hidden;
+    resize: both;
+    white-space: pre-wrap;
+    z-index: 10;
+    line-height: 1.2;
+}
+
+.text-overlay:focus { 
+    border-style: solid; 
+    background: rgba(255,255,255,0.9); 
+}
+
+.signature-overlay {
+    border: 2px dashed #8755c9;
+    resize: both;
+    overflow: hidden;
+    z-index: 10;
+    width: 200px;
+    height: 100px;
+    background: rgba(255,255,255,0.5);
+}
+
+.signature-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Drag Handle */
+.drag-handle {
+    position: absolute;
+    top: -18px; 
+    left: 0; 
+    right: 0;
+    height: 18px;
+    background: #4facfe;
+    color: white;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    cursor: grab;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    display: none; 
+    z-index: 20;
+    user-select: none;
+}
+.signature-overlay .drag-handle { background: #8755c9; }
+.drag-handle:active { cursor: grabbing; }
+.overlay-element:hover .drag-handle { display: block; }
+
+/* Delete button for elements */
+.delete-btn {
+    position: absolute;
+    top: -10px; right: -10px;
+    background: #ff4757; color: white;
+    border: none; border-radius: 50%;
+    width: 22px; height: 22px;
+    cursor: pointer;
+    font-size: 12px; line-height: 12px;
+    display: none;
+    z-index: 25;
+}
+.overlay-element:hover .delete-btn { display: block; }
+
+/* Modal & Signature Pad */
+.modal {
+    display: none; position: fixed; z-index: 100; left: 0; top: 0;
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);
+    justify-content: center; align-items: center;
+}
+.modal-content {
+    background-color: white; padding: 3rem; border-radius: 10px; text-align: center;
+}
+.signature-modal-content {
+    padding: 2rem;
+}
+.canvas-border {
+    border: 2px dashed #ccc;
+    background: #faf8ff;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    cursor: crosshair;
+}
+.signature-actions {
+    display: flex; justify-content: center; gap: 15px;
+}
+.loader {
+    border: 6px solid #f3f3f3; border-top: 6px solid #8755c9; border-radius: 50%;
+    width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 1rem auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
